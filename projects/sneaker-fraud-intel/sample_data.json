@@ -1,0 +1,319 @@
+{
+  "sample_sellers": [
+    {
+      "seller_id": "sneaker_plug_888",
+      "scenario": "High-Risk: Putian Operation",
+      "profile": {
+        "seller_id": "sneaker_plug_888",
+        "account_age_days": 25,
+        "total_sales": 150,
+        "categories_sold": ["Jordans", "Yeezys", "Dunks"],
+        "avg_price": 320.00,
+        "high_value_count": 120,
+        "return_rate": 0.22,
+        "negative_feedback_pct": 8.5,
+        "new_in_box_pct": 100.0,
+        "rapid_listing_count": 45,
+        "location": "Putian, China",
+        "ships_from_known_counterfeit_region": true,
+        "social_media_verified": false,
+        "business_entity": false
+      },
+      "recent_listings": [
+        {
+          "listing_id": "list_001",
+          "item": "Jordan 1 Travis Scott Low",
+          "market_price": 475.00,
+          "list_price": 355.00,
+          "below_market_pct": 25.3,
+          "stock_photo_used": true,
+          "description_copied": true,
+          "multiple_sizes_available": true,
+          "new_release_immediate_stock": true,
+          "bulk_quantity": 10,
+          "inconsistent_photos": false
+        },
+        {
+          "listing_id": "list_002",
+          "item": "Yeezy 350 Pirate Black",
+          "market_price": 800.00,
+          "list_price": 595.00,
+          "below_market_pct": 25.6,
+          "stock_photo_used": true,
+          "description_copied": true,
+          "multiple_sizes_available": true,
+          "new_release_immediate_stock": false,
+          "bulk_quantity": 8,
+          "inconsistent_photos": false
+        }
+      ],
+      "expected_score": "85-95 (CRITICAL)",
+      "expected_action": "BLOCK or require extensive verification"
+    },
+    {
+      "seller_id": "kickscollector_nyc",
+      "scenario": "Low-Risk: Trusted Reseller",
+      "profile": {
+        "seller_id": "kickscollector_nyc",
+        "account_age_days": 890,
+        "total_sales": 420,
+        "categories_sold": ["Jordans", "Nike SB", "New Balance", "Asics"],
+        "avg_price": 185.00,
+        "high_value_count": 85,
+        "return_rate": 0.03,
+        "negative_feedback_pct": 1.2,
+        "new_in_box_pct": 75.0,
+        "rapid_listing_count": 2,
+        "location": "Brooklyn, NY",
+        "ships_from_known_counterfeit_region": false,
+        "social_media_verified": true,
+        "business_entity": true
+      },
+      "recent_listings": [
+        {
+          "listing_id": "list_101",
+          "item": "Jordan 4 Military Black",
+          "market_price": 220.00,
+          "list_price": 210.00,
+          "below_market_pct": 4.5,
+          "stock_photo_used": false,
+          "description_copied": false,
+          "multiple_sizes_available": false,
+          "new_release_immediate_stock": false,
+          "bulk_quantity": 1,
+          "inconsistent_photos": false
+        },
+        {
+          "listing_id": "list_102",
+          "item": "New Balance 2002R Protection Pack",
+          "market_price": 180.00,
+          "list_price": 175.00,
+          "below_market_pct": 2.8,
+          "stock_photo_used": false,
+          "description_copied": false,
+          "multiple_sizes_available": false,
+          "new_release_immediate_stock": false,
+          "bulk_quantity": 1,
+          "inconsistent_photos": false
+        }
+      ],
+      "expected_score": "5-15 (MINIMAL)",
+      "expected_action": "LOW RISK: Trusted seller"
+    },
+    {
+      "seller_id": "freshkicks_la",
+      "scenario": "Medium-Risk: Needs Investigation",
+      "profile": {
+        "seller_id": "freshkicks_la",
+        "account_age_days": 120,
+        "total_sales": 85,
+        "categories_sold": ["Jordans", "Yeezys"],
+        "avg_price": 410.00,
+        "high_value_count": 65,
+        "return_rate": 0.08,
+        "negative_feedback_pct": 4.5,
+        "new_in_box_pct": 95.0,
+        "rapid_listing_count": 12,
+        "location": "Los Angeles, CA",
+        "ships_from_known_counterfeit_region": false,
+        "social_media_verified": false,
+        "business_entity": false
+      },
+      "recent_listings": [
+        {
+          "listing_id": "list_201",
+          "item": "Jordan 1 Chicago Lost & Found",
+          "market_price": 350.00,
+          "list_price": 310.00,
+          "below_market_pct": 11.4,
+          "stock_photo_used": false,
+          "description_copied": false,
+          "multiple_sizes_available": true,
+          "new_release_immediate_stock": true,
+          "bulk_quantity": 3,
+          "inconsistent_photos": true
+        },
+        {
+          "listing_id": "list_202",
+          "item": "Jordan 4 Craft",
+          "market_price": 280.00,
+          "list_price": 245.00,
+          "below_market_pct": 12.5,
+          "stock_photo_used": false,
+          "description_copied": false,
+          "multiple_sizes_available": true,
+          "new_release_immediate_stock": true,
+          "bulk_quantity": 4,
+          "inconsistent_photos": true
+        }
+      ],
+      "expected_score": "30-40 (LOW to MEDIUM)",
+      "expected_action": "MONITOR or STANDARD PROCESS with extra attention"
+    },
+    {
+      "seller_id": "vintage_heat_store",
+      "scenario": "High-Risk: Replica Wholesaler (Sophisticated)",
+      "profile": {
+        "seller_id": "vintage_heat_store",
+        "account_age_days": 650,
+        "total_sales": 1200,
+        "categories_sold": ["Jordans", "Yeezys", "Dunks", "Off-White"],
+        "avg_price": 380.00,
+        "high_value_count": 800,
+        "return_rate": 0.11,
+        "negative_feedback_pct": 3.8,
+        "new_in_box_pct": 98.0,
+        "rapid_listing_count": 35,
+        "location": "San Francisco, CA",
+        "ships_from_known_counterfeit_region": false,
+        "social_media_verified": true,
+        "business_entity": true
+      },
+      "recent_listings": [
+        {
+          "listing_id": "list_301",
+          "item": "Off-White Jordan 5 Sail",
+          "market_price": 550.00,
+          "list_price": 485.00,
+          "below_market_pct": 11.8,
+          "stock_photo_used": false,
+          "description_copied": false,
+          "multiple_sizes_available": true,
+          "new_release_immediate_stock": false,
+          "bulk_quantity": 8,
+          "inconsistent_photos": false
+        },
+        {
+          "listing_id": "list_302",
+          "item": "Travis Scott Jordan 1 Low Reverse Mocha",
+          "market_price": 680.00,
+          "list_price": 620.00,
+          "below_market_pct": 8.8,
+          "stock_photo_used": false,
+          "description_copied": false,
+          "multiple_sizes_available": true,
+          "new_release_immediate_stock": false,
+          "bulk_quantity": 12,
+          "inconsistent_photos": false
+        }
+      ],
+      "expected_score": "55-70 (MEDIUM to HIGH)",
+      "expected_action": "ENHANCED AUTHENTICATION (looks legit but volume + size runs suspicious)",
+      "notes": "This is the hardest pattern to catch—established account, business entity, but selling impossible inventory (full size runs of limited releases). Likely mixing authentics with high-quality replicas."
+    },
+    {
+      "seller_id": "returns_pro_2024",
+      "scenario": "Medium-High Risk: Return Fraud Operation",
+      "profile": {
+        "seller_id": "returns_pro_2024",
+        "account_age_days": 220,
+        "total_sales": 95,
+        "categories_sold": ["Jordans", "Yeezys", "Nike Dunk"],
+        "avg_price": 520.00,
+        "high_value_count": 80,
+        "return_rate": 0.19,
+        "negative_feedback_pct": 2.5,
+        "new_in_box_pct": 100.0,
+        "rapid_listing_count": 3,
+        "location": "Miami, FL",
+        "ships_from_known_counterfeit_region": false,
+        "social_media_verified": false,
+        "business_entity": false
+      },
+      "recent_listings": [
+        {
+          "listing_id": "list_401",
+          "item": "Jordan 1 Patent Bred",
+          "market_price": 380.00,
+          "list_price": 370.00,
+          "below_market_pct": 2.6,
+          "stock_photo_used": false,
+          "description_copied": false,
+          "multiple_sizes_available": false,
+          "new_release_immediate_stock": false,
+          "bulk_quantity": 1,
+          "inconsistent_photos": false
+        }
+      ],
+      "expected_score": "45-60 (MEDIUM)",
+      "expected_action": "STANDARD PROCESS but flag for return monitoring",
+      "notes": "High return rate is the key signal. Likely buying authentics, swapping with fakes, returning fakes. Requires re-authentication of all returns."
+    }
+  ],
+  "test_cases": {
+    "description": "Use these to validate scoring logic",
+    "cases": [
+      {
+        "name": "New account + China + bulk = CRITICAL",
+        "inputs": {
+          "account_age_days": 15,
+          "location": "Putian, China",
+          "rapid_listing_count": 60,
+          "multiple_sizes_available": true
+        },
+        "expected_range": "85-95"
+      },
+      {
+        "name": "Established + US + low volume = MINIMAL",
+        "inputs": {
+          "account_age_days": 800,
+          "location": "New York, NY",
+          "rapid_listing_count": 2,
+          "social_media_verified": true,
+          "business_entity": true
+        },
+        "expected_range": "5-15"
+      },
+      {
+        "name": "Price dumping + immediate stock = HIGH",
+        "inputs": {
+          "below_market_pct": 28,
+          "new_release_immediate_stock": true,
+          "bulk_quantity": 15
+        },
+        "expected_range": "75-85"
+      },
+      {
+        "name": "High return rate = MEDIUM",
+        "inputs": {
+          "return_rate": 0.18,
+          "high_value_count": 70,
+          "new_in_box_pct": 100
+        },
+        "expected_range": "50-65"
+      }
+    ]
+  },
+  "model_calibration": {
+    "description": "Historical validation data (anonymized)",
+    "true_positives": {
+      "description": "Sellers flagged as high-risk who were confirmed fraudulent",
+      "count": 42,
+      "avg_score": 78.5,
+      "common_patterns": ["Putian origin", "bulk listings", "price dumping"]
+    },
+    "false_positives": {
+      "description": "Sellers flagged as high-risk who were legitimate",
+      "count": 6,
+      "avg_score": 64.2,
+      "common_reasons": ["Storage unit liquidation", "estate sale", "business bankruptcy clearance"]
+    },
+    "true_negatives": {
+      "description": "Sellers flagged as low-risk who were confirmed legitimate",
+      "count": 312,
+      "avg_score": 18.3
+    },
+    "false_negatives": {
+      "description": "Sellers flagged as low-risk who were later found fraudulent",
+      "count": 5,
+      "avg_score": 38.6,
+      "common_patterns": ["Long con (built trust over 1+ years)", "account takeover", "mixing authentics with fakes"]
+    },
+    "performance_metrics": {
+      "precision": 0.875,
+      "recall": 0.894,
+      "f1_score": 0.884,
+      "accuracy": 0.970
+    }
+  }
+}
