@@ -1,0 +1,14 @@
+# Ignore everything by default
+*
+
+# Allow demo projects
+!.gitignore
+!README.md
+!projects/
+!projects/**
+!memory/monday-demo-prep.md
+
+# Never track secrets/config
+*.key
+*.pem
+TOOLS.md
