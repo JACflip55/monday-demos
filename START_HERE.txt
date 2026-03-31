@@ -1,0 +1,251 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                                                                            ║
+║                  🚀 ANGEL INVESTOR DASHBOARD - START HERE 🚀              ║
+║                                                                            ║
+║                Built especially for your angel portfolio                   ║
+║                                                                            ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+WHAT YOU HAVE
+═════════════════════════════════════════════════════════════════════════════
+
+A complete, working angel investment portfolio manager. Not a template,
+not documentation—a real tool you can use today to:
+
+  ✅ Track your angel deals (valuation, ownership %, invested amount)
+  ✅ Monitor follow-on investment opportunities  
+  ✅ Record exits and calculate returns (ROI multiple)
+  ✅ See portfolio health at a glance
+  ✅ Manage everything via web dashboard or terminal
+
+
+FASTEST START (30 seconds)
+═════════════════════════════════════════════════════════════════════════════
+
+1. Open terminal in this directory
+2. Run: bash setup.sh
+3. Then: npm start
+4. Open: http://localhost:3000
+
+That's it. You're in.
+
+
+YOUR FIRST STEPS (do these today)
+═════════════════════════════════════════════════════════════════════════════
+
+1. LAUNCH THE DASHBOARD
+   → bash setup.sh
+   → npm start
+   → Visit http://localhost:3000
+
+2. EXPLORE THE UI
+   → See 5 sample deals pre-loaded
+   → Click on any deal to see details
+   → Scroll down to see follow-on opportunities
+
+3. ADD YOUR FIRST REAL DEAL
+   → Scroll to "Add New Deal" form
+   → Fill in: Company, Stage, Valuation, Investment $, Ownership %
+   → Click "Add Deal"
+   → It appears instantly in the table
+
+4. UNDERSTAND THE DATA
+   → Total Invested: Shows sum of all investments
+   → Active Deals: Count of non-exited investments
+   → Avg Ownership: Your average stake across all deals
+
+
+DOCUMENTATION (read in order)
+═════════════════════════════════════════════════════════════════════════════
+
+1. QUICKSTART.md         ← 2-minute guide with examples
+2. README.md             ← Full feature overview
+3. API.md                ← If you want to automate or integrate
+4. SUMMARY.md            ← Why this matters and how to extend it
+
+
+COMMON WORKFLOWS
+═════════════════════════════════════════════════════════════════════════════
+
+Adding a Deal via Web UI
+  1. Go to http://localhost:3000
+  2. Fill "Add New Deal" form
+  3. Click "Add Deal"
+
+Adding a Deal via API
+  curl -X POST http://localhost:3000/api/deals \
+    -H "Content-Type: application/json" \
+    -d '{
+      "name": "YourCompany",
+      "stage": "seed",
+      "valuation": 10000000,
+      "invested_amount": 100000,
+      "ownership_percent": 1.0
+    }'
+
+Tracking a Follow-On Round
+  curl -X POST http://localhost:3000/api/deals/1/follow-ons \
+    -H "Content-Type: application/json" \
+    -d '{
+      "round_name": "Series A",
+      "valuation": 50000000,
+      "available_allocation": 250000
+    }'
+
+Recording an Exit (When You Make Money)
+  curl -X POST http://localhost:3000/api/deals/1/exits \
+    -H "Content-Type: application/json" \
+    -d '{
+      "type": "acquisition",
+      "proceeds": 1000000,
+      "roi_multiple": 10,
+      "exit_date": "2024-08-01"
+    }'
+
+Checking Portfolio Summary
+  curl http://localhost:3000/api/summary
+
+
+FILES IN THIS DIRECTORY
+═════════════════════════════════════════════════════════════════════════════
+
+Core Application
+  • server.js          - Web server & API
+  • db.js              - Database layer
+  • cli.js             - Terminal interface
+  • public/index.html  - Web dashboard
+
+Data & Setup
+  • seed-data.js       - Load sample deals
+  • setup.sh           - One-command setup
+  • package.json       - Dependencies
+
+Documentation  
+  • START_HERE.txt     - This file
+  • QUICKSTART.md      - Get started in 2 min
+  • README.md          - Full documentation
+  • API.md             - API reference
+  • SUMMARY.md         - Why this matters
+
+Reference
+  • MANIFEST.js        - Show what you have
+
+
+WHAT YOUR DATA LOOKS LIKE
+═════════════════════════════════════════════════════════════════════════════
+
+Each deal is stored with:
+  • Name (company name)
+  • Stage (seed, series-a, series-b, etc.)
+  • Valuation (post-money in $)
+  • Invested Amount ($)
+  • Ownership % (your stake)
+  • Date Invested
+  • Status (active or exited)
+  • Notes (free text)
+
+Optional:
+  • Follow-on rounds (track new investment opportunities)
+  • Exits (record when you sell/exit)
+
+
+PORTS & PERFORMANCE
+═════════════════════════════════════════════════════════════════════════════
+
+• Runs on port 3000 (http://localhost:3000)
+• Database is local SQLite (deals.db)
+• Works offline - no internet required
+• Handles hundreds of deals easily
+
+
+STOPPING THE SERVER
+═════════════════════════════════════════════════════════════════════════════
+
+In terminal: Ctrl+C
+
+To restart later: npm start
+
+
+TROUBLESHOOTING
+═════════════════════════════════════════════════════════════════════════════
+
+Node.js not installed?
+  → Download from https://nodejs.org/
+
+Port 3000 in use?
+  → Edit server.js line ~99, change PORT = 3000 to something else
+
+Database needs reset?
+  → Delete deals.db file
+  → Run: node seed-data.js
+
+Dependencies not installed?
+  → Run: npm install
+
+Still stuck?
+  → Check QUICKSTART.md or README.md
+
+
+THINGS YOU CAN DO RIGHT NOW
+═════════════════════════════════════════════════════════════════════════════
+
+[ ] bash setup.sh
+[ ] npm start
+[ ] Visit http://localhost:3000
+[ ] Look at the 5 sample deals
+[ ] Click a deal to see details
+[ ] Add one of your real deals
+[ ] Explore the form fields
+[ ] Check the API endpoint (curl http://localhost:3000/api/summary)
+[ ] Run: node cli.js (see deals in terminal)
+[ ] Read QUICKSTART.md for next steps
+
+
+WHAT'S NEXT WEEK
+═════════════════════════════════════════════════════════════════════════════
+
+Week 1: Use it
+  → Add all your current angel deals
+  → Familiarize yourself with the UI
+  → Use it for a week
+
+Week 2: Extend it
+  → Add follow-on opportunities
+  → Record any exits
+  → Consider what data you're missing
+
+Week 3+: Grow it
+  → Export data for analysis
+  → Share with co-investors
+  → Show to people building investor tools
+  → Maybe turn this into your product
+
+
+THE QUICK WIN
+═════════════════════════════════════════════════════════════════════════════
+
+This weekend, you built:
+
+✅ A full-stack web application
+✅ REST API with 6 endpoints
+✅ Beautiful, responsive UI
+✅ Local database
+✅ Sample data
+✅ CLI interface
+✅ Complete documentation
+✅ Ready to use Monday
+
+That's not a demo. That's a product.
+
+
+NOW GO
+═════════════════════════════════════════════════════════════════════════════
+
+1. bash setup.sh
+2. npm start
+3. http://localhost:3000
+
+Good luck. Make money.
+
+─────────────────────────────────────────────────────────────────────────────
+Built by Claw | Ready to ship | No excuses
