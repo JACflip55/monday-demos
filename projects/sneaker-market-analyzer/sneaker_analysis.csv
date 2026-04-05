@@ -1,0 +1,11 @@
+Type,SKU,Name,Details,Confidence,Potential Profit/Unit
+GOLDEN_GOOSE,AJ1-001,Air Jordan 1 Retro High,High demand (280/mo) + healthy margin (68%),9,115
+GOLDEN_GOOSE,YEEZY-350,Yeezy 350 V2 Onyx,High demand (195/mo) + healthy margin (73%),9,160
+LOW_COMPETITION,PUMA-FUTURE,Puma Future Rider,High demand (92/mo) but only 15 listings,8,N/A
+ARBITRAGE,AJ1-001,Air Jordan 1 Retro High,"Wide bid-ask spread (9.3%) - buy low, sell high",6,25
+ARBITRAGE,YEEZY-350,Yeezy 350 V2 Onyx,"Wide bid-ask spread (9.7%) - buy low, sell high",6,35
+ARBITRAGE,DUNK-LOW-001,Dunk Low Retro,"Wide bid-ask spread (8.9%) - buy low, sell high",6,14
+ARBITRAGE,NB-2002R,New Balance 2002R,"Wide bid-ask spread (9.5%) - buy low, sell high",6,14
+ARBITRAGE,TRAVIS-DUNK,Travis Scott x Dunk Low OG,"Wide bid-ask spread (12.4%) - buy low, sell high",6,99
+ARBITRAGE,PUMA-FUTURE,Puma Future Rider,"Wide bid-ask spread (10.0%) - buy low, sell high",6,10
+ARBITRAGE,YEEZY-500,Yeezy 500 High Slate,"Wide bid-ask spread (9.8%) - buy low, sell high",6,30

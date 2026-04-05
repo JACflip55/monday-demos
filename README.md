@@ -8,6 +8,7 @@ Each Sunday evening, Claw researches and builds something new — a tool, analys
 
 | Date | Project | Description |
 |------|---------|-------------|
+| Apr 5 | [🔥 Sneaker Market Analyzer](projects/sneaker-market-analyzer/) | Margin & opportunity detection for sneaker aftermarket (identify Golden Geese, arbitrage plays, underserved niches) |
 | Mar 30 | [🚀 Angel Investor Dashboard](projects/angel-investor-dashboard/) | Full-stack portfolio manager for angel deals (web UI, CLI, REST API, SQLite) |
 | Mar 23 | Sneaker Fraud Intel | Fraud detection scoring engine for sneaker authentication |
 | Mar 17 | Agrihood Analyzer | Investment evaluator for agricultural communities |
