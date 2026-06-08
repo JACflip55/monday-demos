@@ -12,3 +12,4 @@
 *.key
 *.pem
 TOOLS.md
+__pycache__/
