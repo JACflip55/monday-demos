@@ -1,0 +1,34 @@
+[
+  {
+    "company": "ShopFlow AI",
+    "description": "AI-powered conversion optimization for e-commerce",
+    "rounds": [
+      {"name": "Pre-Seed", "raised": 750000, "pre_money": 3000000, "option_pool_pct": 10, "lead_investor": "Angel Syndicate"},
+      {"name": "Seed", "raised": 3000000, "pre_money": 12000000, "option_pool_pct": 12, "lead_investor": "First Round Capital"},
+      {"name": "Series A", "raised": 15000000, "pre_money": 55000000, "option_pool_pct": 15, "lead_investor": "Benchmark"}
+    ],
+    "your_investment": {"round": "Pre-Seed", "amount": 25000, "pro_rata_rights": true},
+    "exit_valuations": [30000000, 100000000, 300000000]
+  },
+  {
+    "company": "KidSync",
+    "description": "Family scheduling & logistics platform",
+    "rounds": [
+      {"name": "Seed", "raised": 2000000, "pre_money": 6000000, "option_pool_pct": 10, "lead_investor": "Other Angels"},
+      {"name": "Series A", "raised": 8000000, "pre_money": 25000000, "option_pool_pct": 12, "lead_investor": "Andreessen Horowitz"}
+    ],
+    "your_investment": {"round": "Seed", "amount": 100000, "pro_rata_rights": true},
+    "exit_valuations": [50000000, 150000000, 500000000]
+  },
+  {
+    "company": "SoleMart",
+    "description": "Next-gen sneaker marketplace with AI authentication",
+    "rounds": [
+      {"name": "Seed", "raised": 4000000, "pre_money": 16000000, "option_pool_pct": 10, "lead_investor": "Forerunner Ventures"},
+      {"name": "Series A", "raised": 20000000, "pre_money": 60000000, "option_pool_pct": 15, "lead_investor": "Tiger Global"},
+      {"name": "Series B", "raised": 50000000, "pre_money": 200000000, "option_pool_pct": 18, "lead_investor": "Coatue"}
+    ],
+    "your_investment": {"round": "Seed", "amount": 75000, "pro_rata_rights": true},
+    "exit_valuations": [100000000, 500000000, 1000000000, 2000000000]
+  }
+]

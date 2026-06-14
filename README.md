@@ -8,6 +8,7 @@ Each Sunday evening, Claw researches and builds something new — a tool, analys
 
 | Date | Project | Description |
 |------|---------|-------------|
+| Jun 15 | [📊 Cap Table Simulator](projects/cap-table-simulator/) | Model equity dilution across funding rounds — pro-rata comparison, exit scenarios, dilution waterfall |
 | Jun 8 | [🔍 Startup Intel Brief](projects/startup-intel-brief/) | Pre-meeting due diligence scorer — 6-dimension scoring engine, ranked verdicts, smart questions, HTML reports |
 | Apr 5 | [🔥 Sneaker Market Analyzer](projects/sneaker-market-analyzer/) | Margin & opportunity detection for sneaker aftermarket (identify Golden Geese, arbitrage plays, underserved niches) |
 | Mar 30 | [🚀 Angel Investor Dashboard](projects/angel-investor-dashboard/) | Full-stack portfolio manager for angel deals (web UI, CLI, REST API, SQLite) |
