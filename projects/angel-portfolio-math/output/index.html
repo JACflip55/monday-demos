@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Angel Portfolio Math — Monte Carlo Simulator</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    background: #0f172a;
+    color: #e2e8f0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    padding: 24px 16px;
+    line-height: 1.5;
+    min-height: 100vh;
+}
+.container { max-width: 960px; margin: 0 auto; }
+h1 { font-size: 1.75rem; font-weight: 800; margin-bottom: 4px; }
+.subtitle { color: #64748b; font-size: 0.9rem; margin-bottom: 28px; }
+h2 { font-size: 1.2rem; font-weight: 700; margin: 24px 0 12px; color: #f1f5f9; }
+h3 { font-size: 1rem; font-weight: 600; margin: 16px 0 8px; color: #cbd5e1; }
+
+/* Cards */
+.card {
+    background: #1e293b;
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+}
+.card-accent { border-left: 4px solid #06b6d4; }
+.card-green { border-left: 4px solid #22c55e; }
+.card-amber { border-left: 4px solid #f59e0b; }
+
+/* Inputs */
+.input-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+}
+.input-group { display: flex; flex-direction: column; gap: 6px; }
+.input-group label {
+    font-size: 0.8rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+.input-group input[type="range"] {
+    width: 100%;
+    accent-color: #06b6d4;
+}
+.input-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #06b6d4;
+}
+.input-group input[type="number"] {
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: #e2e8f0;
+    font-size: 1rem;
+    width: 100%;
+}
+button {
+    background: #06b6d4;
+    color: #0f172a;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+button:hover { background: #22d3ee; }
+button:active { transform: scale(0.98); }
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin: 16px 0;
+}
+.stat-box {
+    background: #0f172a;
+    border-radius: 8px;
+    padding: 14px;
+    text-align: center;
+}
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #06b6d4;
+}
+.stat-label {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-top: 4px;
+    text-transform: uppercase;
+}
+
+/* Chart */
+.chart-container {
+    width: 100%;
+    height: 200px;
+    position: relative;
+    margin: 16px 0;
+}
+.bar-chart {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    height: 100%;
+    padding: 0 4px;
+    gap: 2px;
+}
+.bar {
+    flex: 1;
+    background: #06b6d4;
+    border-radius: 3px 3px 0 0;
+    min-width: 8px;
+    transition: height 0.3s;
+    position: relative;
+}
+.bar:hover { background: #22d3ee; }
+.chart-labels {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 4px 0;
+    font-size: 0.7rem;
+    color: #475569;
+}
+
+/* Strategy Table */
+.strategy-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    margin: 12px 0;
+}
+.strategy-table th {
+    text-align: left;
+    padding: 10px 12px;
+    color: #64748b;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    border-bottom: 1px solid #334155;
+}
+.strategy-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #1e293b;
+    color: #cbd5e1;
+}
+.strategy-table tr:hover td { background: #1e293b; }
+.highlight { color: #22c55e; font-weight: 700; }
+.warn { color: #f59e0b; }
+.danger { color: #ef4444; }
+
+/* Insights */
+.insight {
+    display: flex;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid #1e293b;
+}
+.insight:last-child { border-bottom: none; }
+.insight-icon { font-size: 1.2rem; flex-shrink: 0; }
+.insight-text { color: #94a3b8; font-size: 0.9rem; }
+
+/* Collapsible */
+.collapsible {
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.collapsible::before {
+    content: '▶';
+    font-size: 0.7rem;
+    transition: transform 0.2s;
+}
+.collapsible.open::before { transform: rotate(90deg); }
+.collapsible-content {
+    display: none;
+    padding-top: 12px;
+}
+.collapsible-content.show { display: block; }
+
+/* Responsive */
+@media (max-width: 600px) {
+    .input-grid { grid-template-columns: 1fr; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .strategy-table { font-size: 0.75rem; }
+    .strategy-table th, .strategy-table td { padding: 8px 6px; }
+    h1 { font-size: 1.4rem; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>📐 Angel Portfolio Math</h1>
+    <p class="subtitle">Monte Carlo Simulator · June 22, 2026 · How many deals should you really do?</p>
+
+    <!-- Input Controls -->
+    <div class="card card-accent">
+        <h2 style="margin-top:0;">Configure Your Portfolio</h2>
+        <div class="input-grid">
+            <div class="input-group">
+                <label>Number of Deals</label>
+                <input type="range" id="numDeals" min="5" max="80" value="20" oninput="updateDisplay()">
+                <span class="input-value" id="numDealsVal">20</span>
+            </div>
+            <div class="input-group">
+                <label>Check Size ($)</label>
+                <input type="range" id="checkSize" min="5000" max="100000" step="5000" value="25000" oninput="updateDisplay()">
+                <span class="input-value" id="checkSizeVal">$25,000</span>
+            </div>
+            <div class="input-group">
+                <label>Follow-On Reserve (%)</label>
+                <input type="range" id="followOn" min="0" max="50" step="5" value="0" oninput="updateDisplay()">
+                <span class="input-value" id="followOnVal">0%</span>
+            </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+            <button onclick="runSimulation()">🎲 Run 10,000 Simulations</button>
+            <span id="totalCapital" style="color:#64748b; font-size:0.9rem;">Total capital: $500,000</span>
+        </div>
+    </div>
+
+    <!-- Results -->
+    <div id="results">
+        <div class="card">
+            <h2 style="margin-top:0;">Portfolio Outcomes</h2>
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-box"><div class="stat-value" id="meanMoic">—</div><div class="stat-label">Mean MOIC</div></div>
+                <div class="stat-box"><div class="stat-value" id="medianMoic">—</div><div class="stat-label">Median MOIC</div></div>
+                <div class="stat-box"><div class="stat-value" id="probProfit">—</div><div class="stat-label">Prob. Profit</div></div>
+                <div class="stat-box"><div class="stat-value" id="prob3x">—</div><div class="stat-label">Prob. 3x+</div></div>
+                <div class="stat-box"><div class="stat-value" id="p10">—</div><div class="stat-label">P10 (Bad)</div></div>
+                <div class="stat-box"><div class="stat-value" id="p90">—</div><div class="stat-label">P90 (Great)</div></div>
+            </div>
+        </div>
+
+        <!-- Distribution Chart -->
+        <div class="card">
+            <h2 style="margin-top:0;">Return Distribution</h2>
+            <p style="color:#64748b; font-size:0.85rem; margin-bottom:12px;">MOIC distribution across 10,000 simulated portfolios</p>
+            <div class="chart-container">
+                <div class="bar-chart" id="barChart"></div>
+            </div>
+            <div class="chart-labels" id="chartLabels"></div>
+        </div>
+
+        <!-- Insights -->
+        <div class="card card-green" id="insightsCard">
+            <h2 style="margin-top:0;">💡 Key Insights</h2>
+            <div id="insights"></div>
+        </div>
+    </div>
+
+    <!-- Strategy Comparison -->
+    <div class="card card-amber">
+        <h2 style="margin-top:0;" class="collapsible open" onclick="toggleSection(this)">Strategy Comparison ($500K fund)</h2>
+        <div class="collapsible-content show">
+            <p style="color:#64748b; font-size:0.85rem; margin-bottom:12px;">Same $500K deployed differently — which construction wins?</p>
+            <div style="overflow-x:auto;">
+            <table class="strategy-table">
+                <thead>
+                    <tr>
+                        <th>Strategy</th>
+                        <th>Deals</th>
+                        <th>Check</th>
+                        <th>Mean</th>
+                        <th>Median</th>
+                        <th>P(Profit)</th>
+                        <th>P(3x)</th>
+                    </tr>
+                </thead>
+                <tbody id="strategyTable"></tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Power Law Explainer -->
+    <div class="card">
+        <h2 style="margin-top:0;" class="collapsible" onclick="toggleSection(this)">📚 Why Portfolio Math Matters</h2>
+        <div class="collapsible-content">
+            <div class="insight">
+                <span class="insight-icon">📊</span>
+                <span class="insight-text"><strong>The Power Law:</strong> ~65% of angel investments return less than 1x. But the top 1-2% return 30-100x+. Your portfolio must survive enough failures to catch a winner.</span>
+            </div>
+            <div class="insight">
+                <span class="insight-icon">🎯</span>
+                <span class="insight-text"><strong>Diversification is insurance:</strong> With 10 deals, there's a ~10% chance you miss a 10x+ entirely. With 30 deals, that drops to ~1%. More shots on goal = more chances to catch the power law tail.</span>
+            </div>
+            <div class="insight">
+                <span class="insight-icon">💰</span>
+                <span class="insight-text"><strong>Follow-on math:</strong> Reserving 25-33% for follow-ons into winners can boost returns significantly — but only if you have signal on which companies are actually winning (not just "feels good").</span>
+            </div>
+            <div class="insight">
+                <span class="insight-icon">⚖️</span>
+                <span class="insight-text"><strong>The tradeoff:</strong> Concentrated portfolios have higher variance (bigger wins OR bigger losses). Diversified portfolios have lower variance but may cap upside through smaller check sizes that limit pro-rata access.</span>
+            </div>
+            <div class="insight">
+                <span class="insight-icon">🏆</span>
+                <span class="insight-text"><strong>The research:</strong> Kauffman Foundation data shows angel portfolios of 15-20+ deals significantly outperform concentrated ones. The "spray and pray" label is misleading — it's really "spray and survive long enough to win."</span>
+            </div>
+        </div>
+    </div>
+
+    <p style="color:#334155; text-align:center; margin-top:32px; font-size:0.8rem;">
+        Built by Claw · <a href="https://github.com/JACflip55/monday-demos" style="color:#475569;">github.com/JACflip55/monday-demos</a> · Based on AngelList/Kauffman data
+    </p>
+</div>
+
+<script>
+// --- Power Law Distribution (matches Python model) ---
+const OUTCOMES = [
+    { prob: 0.40, multiple: 0.0 },
+    { prob: 0.20, multiple: 0.3 },
+    { prob: 0.15, multiple: 1.0 },
+    { prob: 0.10, multiple: 2.5 },
+    { prob: 0.08, multiple: 5.0 },
+    { prob: 0.04, multiple: 10.0 },
+    { prob: 0.02, multiple: 30.0 },
+    { prob: 0.01, multiple: 100.0 },
+];
+
+function simulateDeal() {
+    let r = Math.random();
+    let cum = 0;
+    for (const o of OUTCOMES) {
+        cum += o.prob;
+        if (r <= cum) {
+            if (o.multiple === 0) return 0;
+            return o.multiple * (0.7 + Math.random() * 0.7);
+        }
+    }
+    return 0;
+}
+
+function runSimulation() {
+    const numDeals = parseInt(document.getElementById('numDeals').value);
+    const checkSize = parseInt(document.getElementById('checkSize').value);
+    const followOnPct = parseInt(document.getElementById('followOn').value) / 100;
+    const numSims = 10000;
+
+    const totalCapital = numDeals * checkSize;
+    const followOnReserve = totalCapital * followOnPct;
+    const initialCapital = totalCapital - followOnReserve;
+    const actualCheck = initialCapital / numDeals;
+
+    let moics = [];
+
+    for (let s = 0; s < numSims; s++) {
+        let deals = [];
+        for (let d = 0; d < numDeals; d++) {
+            deals.push(simulateDeal());
+        }
+
+        let totalInvested = initialCapital;
+        let totalReturned = deals.reduce((sum, m) => sum + m * actualCheck, 0);
+
+        if (followOnPct > 0) {
+            const winners = deals.filter(d => d >= 3.0);
+            if (winners.length > 0) {
+                const perDeal = followOnReserve / winners.length;
+                winners.forEach(w => { totalReturned += w * perDeal; });
+                totalInvested += followOnReserve;
+            }
+        }
+
+        moics.push(totalReturned / totalInvested);
+    }
+
+    moics.sort((a, b) => a - b);
+
+    // Stats
+    const mean = moics.reduce((s, v) => s + v, 0) / numSims;
+    const median = moics[Math.floor(numSims / 2)];
+    const probProfit = moics.filter(m => m > 1).length / numSims;
+    const prob3x = moics.filter(m => m >= 3).length / numSims;
+    const p10 = moics[Math.floor(numSims * 0.10)];
+    const p90 = moics[Math.floor(numSims * 0.90)];
+
+    // Update UI
+    document.getElementById('meanMoic').textContent = mean.toFixed(2) + 'x';
+    document.getElementById('medianMoic').textContent = median.toFixed(2) + 'x';
+    document.getElementById('probProfit').textContent = (probProfit * 100).toFixed(0) + '%';
+    document.getElementById('prob3x').textContent = (prob3x * 100).toFixed(0) + '%';
+    document.getElementById('p10').textContent = p10.toFixed(2) + 'x';
+    document.getElementById('p90').textContent = p90.toFixed(2) + 'x';
+
+    // Color code
+    document.getElementById('meanMoic').style.color = mean >= 2 ? '#22c55e' : mean >= 1 ? '#06b6d4' : '#ef4444';
+    document.getElementById('medianMoic').style.color = median >= 2 ? '#22c55e' : median >= 1 ? '#06b6d4' : '#ef4444';
+
+    // Histogram
+    renderChart(moics);
+
+    // Insights
+    renderInsights(mean, median, probProfit, prob3x, p10, p90, numDeals, followOnPct);
+}
+
+function renderChart(moics) {
+    const bins = 25;
+    const maxDisplay = 15; // Cap at 15x for chart
+    const bucketWidth = maxDisplay / bins;
+    let buckets = new Array(bins).fill(0);
+
+    for (const m of moics) {
+        const idx = Math.min(Math.floor(Math.min(m, maxDisplay - 0.01) / bucketWidth), bins - 1);
+        buckets[idx]++;
+    }
+
+    const maxBucket = Math.max(...buckets);
+    const chart = document.getElementById('barChart');
+    const labels = document.getElementById('chartLabels');
+
+    chart.innerHTML = buckets.map((count, i) => {
+        const height = (count / maxBucket * 100).toFixed(1);
+        const moicVal = (i * bucketWidth).toFixed(1);
+        return `<div class="bar" style="height:${height}%" title="${moicVal}x-${(parseFloat(moicVal)+bucketWidth).toFixed(1)}x: ${count} portfolios"></div>`;
+    }).join('');
+
+    labels.innerHTML = `<span>0x</span><span>${(maxDisplay/4).toFixed(0)}x</span><span>${(maxDisplay/2).toFixed(0)}x</span><span>${(maxDisplay*3/4).toFixed(0)}x</span><span>${maxDisplay}x+</span>`;
+}
+
+function renderInsights(mean, median, probProfit, prob3x, p10, p90, numDeals, followOnPct) {
+    let insights = [];
+
+    if (median < 1.0) {
+        insights.push({ icon: '⚠️', text: `<strong>Median is below 1x (${median.toFixed(2)}x)</strong> — more than half of simulated portfolios lose money. Consider more deals for better diversification.` });
+    } else if (median >= 2.0) {
+        insights.push({ icon: '🏆', text: `<strong>Strong median (${median.toFixed(2)}x)</strong> — this portfolio construction gives you a solid base case.` });
+    } else {
+        insights.push({ icon: '📊', text: `<strong>Median ${median.toFixed(2)}x</strong> — typical for angel portfolios. The mean (${mean.toFixed(2)}x) is higher because of power law winners pulling it up.` });
+    }
+
+    if (numDeals < 15) {
+        insights.push({ icon: '🎰', text: `<strong>High variance alert:</strong> With only ${numDeals} deals, your outcome depends heavily on luck. Research suggests 15-20+ deals for reliable angel returns.` });
+    } else if (numDeals >= 40) {
+        insights.push({ icon: '🌊', text: `<strong>Well-diversified (${numDeals} deals):</strong> High probability of catching at least one big winner. Tradeoff: smaller checks may limit pro-rata rights in later rounds.` });
+    }
+
+    if (followOnPct > 0) {
+        insights.push({ icon: '🔄', text: `<strong>Follow-on reserve (${(followOnPct*100).toFixed(0)}%):</strong> Doubles down on winners tracking 3x+. This boosts expected returns but requires good signal on which companies are actually winning.` });
+    } else {
+        insights.push({ icon: '💡', text: `<strong>No follow-on reserve:</strong> Try adding 20-30% reserve. Following on into winners is one of the highest-ROI moves in angel investing.` });
+    }
+
+    const spread = p90 - p10;
+    if (spread > 5) {
+        insights.push({ icon: '📈', text: `<strong>Wide range (${p10.toFixed(1)}x to ${p90.toFixed(1)}x):</strong> Your best-case is ${(p90).toFixed(1)}x but worst-case is ${p10.toFixed(2)}x. High variance = you need to be comfortable with either outcome.` });
+    }
+
+    document.getElementById('insights').innerHTML = insights.map(i =>
+        `<div class="insight"><span class="insight-icon">${i.icon}</span><span class="insight-text">${i.text}</span></div>`
+    ).join('');
+}
+
+function updateDisplay() {
+    const numDeals = document.getElementById('numDeals').value;
+    const checkSize = parseInt(document.getElementById('checkSize').value);
+    const followOn = document.getElementById('followOn').value;
+
+    document.getElementById('numDealsVal').textContent = numDeals;
+    document.getElementById('checkSizeVal').textContent = '$' + checkSize.toLocaleString();
+    document.getElementById('followOnVal').textContent = followOn + '%';
+    document.getElementById('totalCapital').textContent = 'Total capital: $' + (numDeals * checkSize).toLocaleString();
+}
+
+function toggleSection(el) {
+    el.classList.toggle('open');
+    const content = el.nextElementSibling;
+    content.classList.toggle('show');
+}
+
+// --- Load Strategy Table ---
+const strategies = [{"strategy": "Concentrated (10 deals)", "deals": 10, "check_size": 50000, "follow_on_pct": 0.0, "mean_moic": 2.950383818264382, "median_moic": 1.6542405766721637, "prob_profit": 0.724, "prob_3x": 0.2774, "prob_5x": 0.1457, "p10_moic": 0.5423929221498213, "p90_moic": 7.55560485482887}, {"strategy": "Balanced (20 deals)", "deals": 20, "check_size": 25000, "follow_on_pct": 0.0, "mean_moic": 2.993018537858323, "median_moic": 2.0579518931427017, "prob_profit": 0.8497, "prob_3x": 0.3227, "prob_5x": 0.1852, "p10_moic": 0.8595258078236457, "p90_moic": 7.020099245560524}, {"strategy": "Diversified (40 deals)", "deals": 40, "check_size": 12500, "follow_on_pct": 0.0, "mean_moic": 2.9800883707547485, "median_moic": 2.3975837878544333, "prob_profit": 0.9483, "prob_3x": 0.3885, "prob_5x": 0.138, "p10_moic": 1.160788995233744, "p90_moic": 5.461739152623326}, {"strategy": "Spray & Pray (60 deals)", "deals": 60, "check_size": 8333, "follow_on_pct": 0.0, "mean_moic": 3.0124747271587147, "median_moic": 2.6906904093311503, "prob_profit": 0.982, "prob_3x": 0.4319, "prob_5x": 0.1111, "p10_moic": 1.3744324592944288, "p90_moic": 5.124985470924697}, {"strategy": "Balanced + Follow-on", "deals": 15, "check_size": 25000, "follow_on_pct": 0.25, "mean_moic": 5.734505936798527, "median_moic": 3.2945083330377614, "prob_profit": 0.9505, "prob_3x": 0.5618, "prob_5x": 0.3486, "p10_moic": 1.5348779376088626, "p90_moic": 14.641923490061824}, {"strategy": "Concentrated + Follow-on", "deals": 8, "check_size": 41666, "follow_on_pct": 0.33, "mean_moic": 5.943964289771334, "median_moic": 2.977976827606099, "prob_profit": 0.8019, "prob_3x": 0.4959, "prob_5x": 0.277, "p10_moic": 0.44248842408143707, "p90_moic": 14.040240532726694}];
+
+function loadStrategies() {
+    const tbody = document.getElementById('strategyTable');
+    tbody.innerHTML = strategies.map(s => {
+        const meanClass = s.mean_moic >= 2.5 ? 'highlight' : s.mean_moic >= 1.5 ? '' : 'danger';
+        const profitClass = s.prob_profit >= 0.6 ? 'highlight' : s.prob_profit >= 0.45 ? 'warn' : 'danger';
+        return `<tr>
+            <td style="font-weight:600;color:#f1f5f9;">${s.strategy}</td>
+            <td>${s.deals}</td>
+            <td>$${s.check_size.toLocaleString()}</td>
+            <td class="${meanClass}">${s.mean_moic.toFixed(2)}x</td>
+            <td>${s.median_moic.toFixed(2)}x</td>
+            <td class="${profitClass}">${(s.prob_profit*100).toFixed(0)}%</td>
+            <td>${(s.prob_3x*100).toFixed(0)}%</td>
+        </tr>`;
+    }).join('');
+}
+
+// --- Initialize ---
+loadStrategies();
+runSimulation();
+</script>
+</body>
+</html>
