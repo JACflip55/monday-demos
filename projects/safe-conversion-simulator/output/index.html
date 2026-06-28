@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SAFE Conversion Simulator</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0f1117;
+  --surface: #1a1d27;
+  --surface2: #242834;
+  --border: #2d3348;
+  --text: #e4e8f1;
+  --text-dim: #8b92a8;
+  --accent: #6c63ff;
+  --accent2: #ff6b6b;
+  --green: #4ecdc4;
+  --orange: #ffa726;
+  --pink: #ff6b9d;
+  --blue: #42a5f5;
+  --radius: 12px;
+}
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  padding: 16px;
+  min-height: 100vh;
+}
+h1 { font-size: 1.5rem; margin-bottom: 4px; }
+h2 { font-size: 1.1rem; margin-bottom: 12px; color: var(--accent); }
+h3 { font-size: 0.95rem; margin-bottom: 8px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
+.header { text-align: center; padding: 20px 0; }
+.header .date { color: var(--text-dim); font-size: 0.85rem; }
+.header .subtitle { color: var(--text-dim); font-size: 0.9rem; margin-top: 4px; }
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.safe-list { display: flex; flex-direction: column; gap: 12px; }
+.safe-item {
+  background: var(--surface2);
+  border-radius: 8px;
+  padding: 12px;
+  border-left: 3px solid var(--accent);
+}
+.safe-item:nth-child(2) { border-left-color: var(--green); }
+.safe-item:nth-child(3) { border-left-color: var(--orange); }
+.safe-item:nth-child(4) { border-left-color: var(--pink); }
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.form-group { display: flex; flex-direction: column; gap: 4px; }
+.form-group label {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+input, select {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  color: var(--text);
+  font-size: 0.9rem;
+  width: 100%;
+}
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.btn {
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+.btn:hover { opacity: 0.85; }
+.btn-sm { padding: 6px 12px; font-size: 0.8rem; }
+.btn-danger { background: var(--accent2); }
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+}
+.btn-row { display: flex; gap: 8px; margin-top: 12px; }
+/* Ownership Chart */
+.ownership-chart {
+  display: flex;
+  height: 32px;
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 12px 0;
+}
+.ownership-segment {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: white;
+  min-width: 20px;
+  transition: width 0.3s ease;
+}
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+}
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+/* Metrics */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.metric {
+  background: var(--surface2);
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+}
+.metric .value {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.metric .label {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+.metric.highlight .value { color: var(--green); }
+.metric.warning .value { color: var(--orange); }
+.metric.danger .value { color: var(--accent2); }
+/* Scenario comparison */
+.scenario-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  margin-top: 8px;
+}
+.scenario-table th {
+  text-align: left;
+  padding: 8px 6px;
+  color: var(--text-dim);
+  border-bottom: 1px solid var(--border);
+  font-weight: 500;
+}
+.scenario-table td {
+  padding: 8px 6px;
+  border-bottom: 1px solid var(--border);
+}
+.scenario-table tr:last-child td { border-bottom: none; }
+.scenario-table .highlight { color: var(--green); font-weight: 600; }
+/* Conversion explanation */
+.conversion-steps {
+  background: var(--surface2);
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 12px;
+  font-size: 0.8rem;
+}
+.conversion-steps .step {
+  padding: 4px 0;
+  display: flex;
+  gap: 8px;
+}
+.conversion-steps .step-num {
+  color: var(--accent);
+  font-weight: 700;
+  min-width: 18px;
+}
+.conversion-steps .step-math {
+  color: var(--text-dim);
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.75rem;
+}
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 2px;
+  background: var(--surface2);
+  border-radius: 8px;
+  padding: 3px;
+  margin-bottom: 16px;
+}
+.tab {
+  flex: 1;
+  padding: 8px;
+  text-align: center;
+  font-size: 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--text-dim);
+  transition: all 0.2s;
+}
+.tab.active {
+  background: var(--accent);
+  color: white;
+  font-weight: 600;
+}
+/* Slider */
+.slider-container { margin: 16px 0; }
+.slider-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.slider-header .label { font-size: 0.8rem; color: var(--text-dim); }
+.slider-header .value { font-size: 0.9rem; font-weight: 600; color: var(--accent); }
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  background: var(--surface2);
+  border-radius: 3px;
+  border: none;
+  padding: 0;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  background: var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+}
+/* Collapsible */
+.collapsible-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 4px 0;
+}
+.collapsible-header .arrow {
+  transition: transform 0.2s;
+  color: var(--text-dim);
+}
+.collapsible-header.open .arrow { transform: rotate(90deg); }
+.collapsible-content { display: none; padding-top: 8px; }
+.collapsible-content.open { display: block; }
+/* Info tooltip */
+.info-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--border);
+  color: var(--text-dim);
+  font-size: 0.65rem;
+  font-weight: 700;
+  cursor: help;
+  margin-left: 4px;
+}
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 0.85rem;
+  color: var(--text);
+  z-index: 100;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; }
+/* Responsive tweaks */
+@media (max-width: 400px) {
+  body { padding: 10px; }
+  .form-row { grid-template-columns: 1fr; }
+  .metrics-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📄 SAFE Conversion Simulator</h1>
+  <div class="subtitle">Model how SAFEs convert to equity at your next priced round</div>
+  <div class="date">Monday Demo — June 29, 2026</div>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('simulator')">Simulator</div>
+  <div class="tab" onclick="switchTab('scenarios')">Scenarios</div>
+  <div class="tab" onclick="switchTab('learn')">Learn</div>
+</div>
+
+<!-- SIMULATOR TAB -->
+<div id="tab-simulator">
+  <!-- Round Parameters -->
+  <div class="card">
+    <h2>🎯 Series A Parameters</h2>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Pre-Money Valuation</label>
+        <input type="text" id="preMoney" value="12000000" oninput="recalculate()">
+      </div>
+      <div class="form-group">
+        <label>New Investment</label>
+        <input type="text" id="newInvestment" value="3000000" oninput="recalculate()">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Founder Shares</label>
+        <input type="text" id="founderShares" value="8000000" oninput="recalculate()">
+      </div>
+      <div class="form-group">
+        <label>Option Pool %</label>
+        <input type="text" id="optionPool" value="10" oninput="recalculate()">
+      </div>
+    </div>
+  </div>
+
+  <!-- SAFEs -->
+  <div class="card">
+    <div class="card-header">
+      <h2>📄 SAFEs Outstanding</h2>
+      <button class="btn btn-sm" onclick="addSafe()">+ Add SAFE</button>
+    </div>
+    <div class="safe-list" id="safeList">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="card">
+    <h2>📊 Conversion Results</h2>
+    <div id="ownershipChart"></div>
+    <div class="metrics-grid" id="metricsGrid"></div>
+    <div id="conversionSteps"></div>
+  </div>
+</div>
+
+<!-- SCENARIOS TAB -->
+<div id="tab-scenarios" style="display:none;">
+  <div class="card">
+    <h2>📈 Valuation Sensitivity</h2>
+    <p style="font-size:0.8rem;color:var(--text-dim);margin-bottom:12px;">
+      See how founder dilution changes across Series A valuations
+    </p>
+    <div class="slider-container">
+      <div class="slider-header">
+        <span class="label">Series A Pre-Money</span>
+        <span class="value" id="scenarioValDisplay">$12M</span>
+      </div>
+      <input type="range" id="scenarioSlider" min="4000000" max="30000000" step="500000" value="12000000" oninput="updateScenarioSlider()">
+    </div>
+    <div id="scenarioResult"></div>
+  </div>
+
+  <div class="card">
+    <h2>🔀 Side-by-Side: Cap vs Discount</h2>
+    <p style="font-size:0.8rem;color:var(--text-dim);margin-bottom:12px;">
+      Which SAFE term matters more at different valuations?
+    </p>
+    <table class="scenario-table" id="comparisonTable">
+      <thead>
+        <tr>
+          <th>Valuation</th>
+          <th>Cap Only ($8M)</th>
+          <th>Discount Only (20%)</th>
+          <th>Winner</th>
+        </tr>
+      </thead>
+      <tbody id="comparisonBody"></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>💀 Dilution Danger Zones</h2>
+    <p style="font-size:0.8rem;color:var(--text-dim);margin-bottom:12px;">
+      How much SAFE $ can you raise before founders drop below key thresholds?
+    </p>
+    <div id="dangerZones"></div>
+  </div>
+</div>
+
+<!-- LEARN TAB -->
+<div id="tab-learn" style="display:none;">
+  <div class="card">
+    <h2>📚 SAFE Mechanics</h2>
+
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+      <h3 style="margin:0">What is a SAFE?</h3>
+      <span class="arrow">▶</span>
+    </div>
+    <div class="collapsible-content">
+      <p style="font-size:0.85rem;margin-bottom:8px;">A <strong>Simple Agreement for Future Equity</strong> is an investment contract that converts to equity when a priced round occurs. Unlike convertible notes, SAFEs have:</p>
+      <ul style="font-size:0.85rem;padding-left:16px;color:var(--text-dim);">
+        <li>No interest rate</li>
+        <li>No maturity date</li>
+        <li>No debt on the balance sheet</li>
+        <li>Conversion only at a qualifying financing event</li>
+      </ul>
+    </div>
+
+    <div class="collapsible-header" onclick="toggleCollapsible(this)" style="margin-top:12px;">
+      <h3 style="margin:0">Valuation Cap</h3>
+      <span class="arrow">▶</span>
+    </div>
+    <div class="collapsible-content">
+      <p style="font-size:0.85rem;">The <strong>cap</strong> sets a maximum valuation at which your SAFE converts. If the Series A prices higher than your cap, you convert at the cap — getting more shares for the same investment.</p>
+      <div class="conversion-steps" style="margin-top:8px;">
+        <div class="step"><span class="step-num">→</span><span>Example: $100K SAFE with $8M cap</span></div>
+        <div class="step"><span class="step-num">→</span><span>Series A at $12M pre-money</span></div>
+        <div class="step"><span class="step-num">→</span><span>You convert at $8M (not $12M) = 33% more shares</span></div>
+      </div>
+    </div>
+
+    <div class="collapsible-header" onclick="toggleCollapsible(this)" style="margin-top:12px;">
+      <h3 style="margin:0">Discount Rate</h3>
+      <span class="arrow">▶</span>
+    </div>
+    <div class="collapsible-content">
+      <p style="font-size:0.85rem;">A <strong>discount</strong> gives you a percentage off the Series A price. A 20% discount means you pay 80 cents per share when new investors pay $1.</p>
+      <div class="conversion-steps" style="margin-top:8px;">
+        <div class="step"><span class="step-num">→</span><span>Series A price: $1.50/share</span></div>
+        <div class="step"><span class="step-num">→</span><span>Your price: $1.50 × 0.80 = $1.20/share</span></div>
+        <div class="step"><span class="step-num">→</span><span>You get 25% more shares than new investors</span></div>
+      </div>
+    </div>
+
+    <div class="collapsible-header" onclick="toggleCollapsible(this)" style="margin-top:12px;">
+      <h3 style="margin:0">Cap + Discount (takes the better)</h3>
+      <span class="arrow">▶</span>
+    </div>
+    <div class="collapsible-content">
+      <p style="font-size:0.85rem;">When a SAFE has both a cap AND a discount, the investor gets <strong>whichever produces more shares</strong> (lower effective price per share).</p>
+      <div class="conversion-steps" style="margin-top:8px;">
+        <div class="step"><span class="step-num">→</span><span>Cap price: $100K ÷ ($8M ÷ 10M shares) = 125K shares</span></div>
+        <div class="step"><span class="step-num">→</span><span>Discount price: $100K ÷ ($1.20) = 83.3K shares</span></div>
+        <div class="step"><span class="step-num">→</span><span>Investor gets 125K shares (cap was better)</span></div>
+      </div>
+    </div>
+
+    <div class="collapsible-header" onclick="toggleCollapsible(this)" style="margin-top:12px;">
+      <h3 style="margin:0">Pre-Money vs Post-Money SAFEs</h3>
+      <span class="arrow">▶</span>
+    </div>
+    <div class="collapsible-content">
+      <p style="font-size:0.85rem;margin-bottom:8px;">The 2018 Y Combinator <strong>post-money SAFE</strong> changed the game:</p>
+      <table class="scenario-table">
+        <tr><th></th><th>Pre-Money SAFE</th><th>Post-Money SAFE</th></tr>
+        <tr><td>Cap includes</td><td>Only existing shares</td><td>All SAFEs + options</td></tr>
+        <tr><td>Dilution clarity</td><td>Uncertain until round</td><td>Known at signing</td></tr>
+        <tr><td>Multiple SAFEs</td><td>Dilute each other less</td><td>Each SAFE's % is fixed</td></tr>
+        <tr><td>Founder impact</td><td>More favorable</td><td>More dilutive</td></tr>
+      </table>
+      <p style="font-size:0.8rem;color:var(--text-dim);margin-top:8px;">This simulator uses <strong>pre-money SAFE</strong> mechanics by default (more common outside YC). Toggle post-money mode in the settings below.</p>
+    </div>
+
+    <div class="collapsible-header" onclick="toggleCollapsible(this)" style="margin-top:12px;">
+      <h3 style="margin:0">Pro-Rata Rights</h3>
+      <span class="arrow">▶</span>
+    </div>
+    <div class="collapsible-content">
+      <p style="font-size:0.85rem;">Pro-rata gives SAFE holders the right to invest in the priced round to maintain their ownership percentage. This is valuable because:</p>
+      <ul style="font-size:0.85rem;padding-left:16px;color:var(--text-dim);">
+        <li>You can double down on winners</li>
+        <li>Prevents dilution in hot rounds</li>
+        <li>Most post-money SAFEs include pro-rata by default</li>
+        <li>Usually optional — you don't have to exercise it</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>⚡ Quick Reference</h2>
+    <div class="metrics-grid">
+      <div class="metric">
+        <div class="value">$8-10M</div>
+        <div class="label">Typical Seed Cap (2024)</div>
+      </div>
+      <div class="metric">
+        <div class="value">20%</div>
+        <div class="label">Standard Discount</div>
+      </div>
+      <div class="metric">
+        <div class="value">$500K-2M</div>
+        <div class="label">Pre-Seed SAFE Range</div>
+      </div>
+      <div class="metric">
+        <div class="value">15-25%</div>
+        <div class="label">Total SAFE Dilution Target</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// State
+let safes = [
+  { name: 'Pre-Seed SAFE #1', amount: 250000, cap: 8000000, discount: 20, type: 'post-money' },
+  { name: 'Pre-Seed SAFE #2', amount: 150000, cap: 10000000, discount: 0, type: 'post-money' }
+];
+
+const colors = ['#6c63ff', '#4ecdc4', '#ffa726', '#ff6b9d', '#42a5f5', '#ab47bc'];
+
+function formatMoney(n) {
+  if (n >= 1e9) return '$' + (n/1e9).toFixed(1) + 'B';
+  if (n >= 1e6) return '$' + (n/1e6).toFixed(1) + 'M';
+  if (n >= 1e3) return '$' + (n/1e3).toFixed(0) + 'K';
+  return '$' + n.toLocaleString();
+}
+
+function formatPct(n) { return n.toFixed(1) + '%'; }
+
+function parseNum(id) {
+  return parseFloat(document.getElementById(id).value.replace(/[,$]/g, '')) || 0;
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('[id^="tab-"]').forEach(t => t.style.display = 'none');
+  event.target.classList.add('active');
+  document.getElementById('tab-' + tab).style.display = 'block';
+  if (tab === 'scenarios') updateScenarios();
+}
+
+function toggleCollapsible(el) {
+  el.classList.toggle('open');
+  el.nextElementSibling.classList.toggle('open');
+}
+
+function addSafe() {
+  if (safes.length >= 6) { showToast('Max 6 SAFEs'); return; }
+  safes.push({ name: `SAFE #${safes.length + 1}`, amount: 100000, cap: 10000000, discount: 20, type: 'post-money' });
+  renderSafes();
+  recalculate();
+}
+
+function removeSafe(i) {
+  safes.splice(i, 1);
+  renderSafes();
+  recalculate();
+}
+
+function updateSafe(i, field, value) {
+  if (field === 'name') safes[i][field] = value;
+  else if (field === 'type') safes[i][field] = value;
+  else safes[i][field] = parseFloat(value.replace(/[,$]/g, '')) || 0;
+  recalculate();
+}
+
+function renderSafes() {
+  const list = document.getElementById('safeList');
+  list.innerHTML = safes.map((s, i) => `
+    <div class="safe-item">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <input type="text" value="${s.name}" onchange="updateSafe(${i},'name',this.value)" style="background:transparent;border:none;font-weight:600;font-size:0.9rem;color:var(--text);width:60%;">
+        <button class="btn btn-sm btn-danger" onclick="removeSafe(${i})" style="padding:4px 8px;font-size:0.7rem;">✕</button>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Investment $</label>
+          <input type="text" value="${s.amount}" oninput="updateSafe(${i},'amount',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Valuation Cap $</label>
+          <input type="text" value="${s.cap}" oninput="updateSafe(${i},'cap',this.value)">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Discount %</label>
+          <input type="text" value="${s.discount}" oninput="updateSafe(${i},'discount',this.value)">
+        </div>
+        <div class="form-group">
+          <label>SAFE Type</label>
+          <select onchange="updateSafe(${i},'type',this.value)">
+            <option value="post-money" ${s.type==='post-money'?'selected':''}>Post-Money</option>
+            <option value="pre-money" ${s.type==='pre-money'?'selected':''}>Pre-Money</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function calculateConversion(preMoney, newInvestment, founderShares, optionPoolPct, safeList) {
+  const postMoney = preMoney + newInvestment;
+  const seriesAPrice = preMoney / founderShares;
+
+  // Calculate shares for each SAFE
+  const safeResults = safeList.map((safe, i) => {
+    let capPrice = safe.cap > 0 ? safe.cap / founderShares : Infinity;
+    let discountPrice = safe.discount > 0 ? seriesAPrice * (1 - safe.discount / 100) : seriesAPrice;
+
+    // For post-money SAFEs, cap price = cap / (cap / price per share at cap)
+    // Simplified: investor gets (investment / cap) * postMoney worth of shares at cap
+    if (safe.type === 'post-money' && safe.cap > 0) {
+      capPrice = safe.cap / founderShares; // conversion price based on cap
+    }
+
+    const conversionPrice = Math.min(capPrice, discountPrice);
+    const shares = safe.amount / conversionPrice;
+    const method = capPrice <= discountPrice ? 'cap' : 'discount';
+
+    return {
+      ...safe,
+      index: i,
+      conversionPrice,
+      shares,
+      method,
+      capPrice,
+      discountPrice
+    };
+  });
+
+  // Total shares after conversion
+  const totalSafeShares = safeResults.reduce((sum, s) => sum + s.shares, 0);
+  const seriesAShares = newInvestment / seriesAPrice;
+
+  // Option pool (on pre-money, typical)
+  const totalPrePool = founderShares + totalSafeShares + seriesAShares;
+  const optionShares = totalPrePool * (optionPoolPct / 100) / (1 - optionPoolPct / 100);
+
+  const totalShares = founderShares + totalSafeShares + seriesAShares + optionShares;
+
+  // Ownership percentages
+  const founderPct = (founderShares / totalShares) * 100;
+  const seriesAPct = (seriesAShares / totalShares) * 100;
+  const optionPct = (optionShares / totalShares) * 100;
+
+  const safeOwnership = safeResults.map(s => ({
+    ...s,
+    pct: (s.shares / totalShares) * 100
+  }));
+
+  const totalSafePct = safeOwnership.reduce((sum, s) => sum + s.pct, 0);
+
+  return {
+    founderPct,
+    seriesAPct,
+    optionPct,
+    totalSafePct,
+    safeOwnership,
+    totalShares,
+    seriesAPrice,
+    postMoney,
+    founderShares,
+    seriesAShares,
+    optionShares,
+    totalSafeShares
+  };
+}
+
+function recalculate() {
+  const preMoney = parseNum('preMoney');
+  const newInvestment = parseNum('newInvestment');
+  const founderShares = parseNum('founderShares');
+  const optionPoolPct = parseNum('optionPool');
+
+  if (!preMoney || !founderShares) return;
+
+  const result = calculateConversion(preMoney, newInvestment, founderShares, optionPoolPct, safes);
+  renderResults(result);
+}
+
+function renderResults(r) {
+  // Ownership bar chart
+  let chartHTML = '<div class="ownership-chart">';
+  chartHTML += `<div class="ownership-segment" style="width:${r.founderPct}%;background:#64748b;">${r.founderPct > 8 ? formatPct(r.founderPct) : ''}</div>`;
+  r.safeOwnership.forEach((s, i) => {
+    chartHTML += `<div class="ownership-segment" style="width:${s.pct}%;background:${colors[i]};">${s.pct > 5 ? formatPct(s.pct) : ''}</div>`;
+  });
+  chartHTML += `<div class="ownership-segment" style="width:${r.seriesAPct}%;background:#e91e63;">${r.seriesAPct > 8 ? formatPct(r.seriesAPct) : ''}</div>`;
+  chartHTML += `<div class="ownership-segment" style="width:${r.optionPct}%;background:#37474f;">${r.optionPct > 6 ? formatPct(r.optionPct) : ''}</div>`;
+  chartHTML += '</div>';
+
+  // Legend
+  chartHTML += '<div class="legend">';
+  chartHTML += `<div class="legend-item"><div class="legend-dot" style="background:#64748b;"></div>Founders ${formatPct(r.founderPct)}</div>`;
+  r.safeOwnership.forEach((s, i) => {
+    chartHTML += `<div class="legend-item"><div class="legend-dot" style="background:${colors[i]};"></div>${s.name} ${formatPct(s.pct)}</div>`;
+  });
+  chartHTML += `<div class="legend-item"><div class="legend-dot" style="background:#e91e63;"></div>Series A ${formatPct(r.seriesAPct)}</div>`;
+  chartHTML += `<div class="legend-item"><div class="legend-dot" style="background:#37474f;"></div>Options ${formatPct(r.optionPct)}</div>`;
+  chartHTML += '</div>';
+  document.getElementById('ownershipChart').innerHTML = chartHTML;
+
+  // Metrics
+  const totalSafeAmt = safes.reduce((sum, s) => sum + s.amount, 0);
+  const effectiveValForSafes = totalSafeAmt / (r.totalSafePct / 100);
+  const dilutionFromSafes = r.totalSafePct;
+
+  let metricsClass = dilutionFromSafes < 15 ? 'highlight' : dilutionFromSafes < 25 ? 'warning' : 'danger';
+
+  document.getElementById('metricsGrid').innerHTML = `
+    <div class="metric ${metricsClass}">
+      <div class="value">${formatPct(dilutionFromSafes)}</div>
+      <div class="label">SAFE Dilution</div>
+    </div>
+    <div class="metric highlight">
+      <div class="value">${formatPct(r.founderPct)}</div>
+      <div class="label">Founder Ownership</div>
+    </div>
+    <div class="metric">
+      <div class="value">${formatMoney(r.postMoney)}</div>
+      <div class="label">Post-Money Val</div>
+    </div>
+    <div class="metric">
+      <div class="value">${formatMoney(r.seriesAPrice)}</div>
+      <div class="label">Price/Share</div>
+    </div>
+  `;
+
+  // Conversion steps
+  let stepsHTML = '<div class="conversion-steps"><h3 style="margin-bottom:8px;">Conversion Math</h3>';
+  r.safeOwnership.forEach((s, i) => {
+    stepsHTML += `<div style="margin-bottom:8px;padding-bottom:8px;${i < r.safeOwnership.length-1 ? 'border-bottom:1px solid var(--border);':''}">`;
+    stepsHTML += `<div style="font-weight:600;color:${colors[i]};font-size:0.85rem;">${s.name}</div>`;
+    stepsHTML += `<div class="step"><span class="step-num">1</span><span class="step-math">Series A price: ${formatMoney(parseNum('preMoney'))} ÷ ${parseNum('founderShares').toLocaleString()} = ${formatMoney(r.seriesAPrice)}/share</span></div>`;
+    if (s.cap > 0) {
+      stepsHTML += `<div class="step"><span class="step-num">2</span><span class="step-math">Cap price: ${formatMoney(s.cap)} ÷ ${parseNum('founderShares').toLocaleString()} = ${formatMoney(s.capPrice)}/share</span></div>`;
+    }
+    if (s.discount > 0) {
+      stepsHTML += `<div class="step"><span class="step-num">3</span><span class="step-math">Discount price: ${formatMoney(r.seriesAPrice)} × ${(100-s.discount)}% = ${formatMoney(s.discountPrice)}/share</span></div>`;
+    }
+    stepsHTML += `<div class="step"><span class="step-num">→</span><span class="step-math">Converts via <strong>${s.method}</strong> at ${formatMoney(s.conversionPrice)}/share → ${Math.round(s.shares).toLocaleString()} shares (${formatPct(s.pct)})</span></div>`;
+    stepsHTML += '</div>';
+  });
+  stepsHTML += '</div>';
+  document.getElementById('conversionSteps').innerHTML = stepsHTML;
+}
+
+// Scenarios tab
+function updateScenarioSlider() {
+  const val = parseInt(document.getElementById('scenarioSlider').value);
+  document.getElementById('scenarioValDisplay').textContent = formatMoney(val);
+  updateScenarios();
+}
+
+function updateScenarios() {
+  const val = parseInt(document.getElementById('scenarioSlider').value);
+  const founderShares = parseNum('founderShares');
+  const newInvestment = parseNum('newInvestment');
+  const optionPool = parseNum('optionPool');
+
+  const result = calculateConversion(val, newInvestment, founderShares, optionPool, safes);
+
+  let html = '<div class="metrics-grid" style="margin-top:12px;">';
+  html += `<div class="metric"><div class="value">${formatPct(result.founderPct)}</div><div class="label">Founder Ownership</div></div>`;
+  html += `<div class="metric ${result.totalSafePct > 25 ? 'danger' : result.totalSafePct > 15 ? 'warning' : 'highlight'}"><div class="value">${formatPct(result.totalSafePct)}</div><div class="label">SAFE Dilution</div></div>`;
+  html += `<div class="metric"><div class="value">${formatPct(result.seriesAPct)}</div><div class="label">Series A %</div></div>`;
+  html += `<div class="metric"><div class="value">${formatMoney(result.postMoney)}</div><div class="label">Post-Money</div></div>`;
+  html += '</div>';
+  document.getElementById('scenarioResult').innerHTML = html;
+
+  // Comparison table
+  const valuations = [6e6, 8e6, 10e6, 12e6, 15e6, 20e6, 25e6];
+  const capSafe = [{ name:'Cap Only', amount:250000, cap:8000000, discount:0, type:'post-money' }];
+  const discSafe = [{ name:'Discount Only', amount:250000, cap:0, discount:20, type:'post-money' }];
+
+  let tbody = '';
+  valuations.forEach(v => {
+    const capResult = calculateConversion(v, newInvestment, founderShares, optionPool, capSafe);
+    const discResult = calculateConversion(v, newInvestment, founderShares, optionPool, discSafe);
+    const capPct = capResult.totalSafePct;
+    const discPct = discResult.totalSafePct;
+    const winner = capPct > discPct ? 'Cap' : capPct < discPct ? 'Discount' : 'Tie';
+    const winClass = winner === 'Cap' ? 'color:var(--accent)' : winner === 'Discount' ? 'color:var(--green)' : '';
+    tbody += `<tr>
+      <td>${formatMoney(v)}</td>
+      <td>${formatPct(capPct)}</td>
+      <td>${formatPct(discPct)}</td>
+      <td style="${winClass};font-weight:600;">${winner}</td>
+    </tr>`;
+  });
+  document.getElementById('comparisonBody').innerHTML = tbody;
+
+  // Danger zones
+  const thresholds = [
+    { label: 'Founders < 50%', target: 50, type: 'founder' },
+    { label: 'SAFE dilution > 30%', target: 30, type: 'safe' },
+    { label: 'Founders < 40%', target: 40, type: 'founder' }
+  ];
+  let dangerHTML = '<div style="display:flex;flex-direction:column;gap:8px;">';
+  thresholds.forEach(t => {
+    // Binary search for threshold
+    let lo = 0, hi = 5000000, answer = -1;
+    for (let iter = 0; iter < 30; iter++) {
+      let mid = (lo + hi) / 2;
+      let testSafes = [{ name:'Test', amount: mid, cap: 8000000, discount: 20, type: 'post-money' }];
+      let res = calculateConversion(val, newInvestment, founderShares, optionPool, testSafes);
+      let metric = t.type === 'founder' ? res.founderPct : res.totalSafePct;
+      if (t.type === 'founder' ? metric < t.target : metric > t.target) { hi = mid; answer = mid; }
+      else { lo = mid; }
+    }
+    let statusColor = answer > 0 && answer < safes.reduce((s,x)=>s+x.amount,0) ? 'var(--accent2)' : 'var(--green)';
+    dangerHTML += `<div style="display:flex;justify-content:space-between;align-items:center;background:var(--surface2);padding:10px 12px;border-radius:8px;">
+      <span style="font-size:0.85rem;">${t.label}</span>
+      <span style="font-size:0.85rem;font-weight:600;color:${statusColor};">${answer > 0 ? 'at ' + formatMoney(Math.round(answer)) + ' raised' : 'N/A'}</span>
+    </div>`;
+  });
+  dangerHTML += '</div>';
+  document.getElementById('dangerZones').innerHTML = dangerHTML;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// Init
+renderSafes();
+recalculate();
+</script>
+</body>
+</html>
